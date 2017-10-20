@@ -1,8 +1,7 @@
 package com.dapid.agent.controllers.routes;
 
 import com.dapid.agent.models.Jobs;
-import com.google.gson.Gson;
-import org.eclipse.jetty.http.HttpStatus;
+import com.dapid.agent.services.SimpleExitRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -17,21 +16,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created for K and M Consulting LLC.
  * Created by Jose M Leon 2017
  **/
-public class ListJobsRoute implements Route, ExitRoute {
+public class ListJobsRoute implements Route {
     private static final Logger log = LoggerFactory.getLogger(ListJobsRoute.class);
-
-    private Gson gson;
     private ConcurrentHashMap<UUID, Jobs> map;
 
-    public ListJobsRoute(ConcurrentHashMap<java.util.UUID, Jobs> map) {
-        this.gson = new Gson();
+    public ListJobsRoute(ConcurrentHashMap<UUID, Jobs> map) {
         this.map = map;
     }
 
     private String execute(Response res) {
-        String json = this.gson.toJson(new ArrayList<Jobs>(map.values()));
-        log.info(String.format("Listing jobs we are working on:\n%s", json));
-        return exit(res, HttpStatus.OK_200, json, null);
+        return SimpleExitRoute.builder(res).OK_200().json(map.values(), ArrayList.class);
     }
 
     @Override

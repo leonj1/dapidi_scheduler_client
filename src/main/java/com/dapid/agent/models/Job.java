@@ -31,16 +31,16 @@ public class Job {
     }
 
     public Job(AddJobContext context) {
-        this.id = context.jobInstanceId;
-        this.name = context.jobDefinition.getName();
-        this.command = context.jobDefinition.getCommand();
-        this.runAs = context.jobDefinition.getRunAs();
-        this.userProfile = context.jobDefinition.getUserProfile();
-        this.retryOnFailure = context.jobDefinition.getRetryOnFailure();
-        this.stdoutFile = context.jobDefinition.getStdoutFile();
-        this.stderrFile = context.jobDefinition.getStderrFile();
-        this.maxRunTime = context.jobDefinition.getMaxRunTime();
-        this.maxRetry = context.jobDefinition.getMaxRetry();
+        this.id = context.getJobInstanceId();
+        this.name = context.getJobDefinition().getName();
+        this.command = context.getJobDefinition().getCommand();
+        this.runAs = context.getJobDefinition().getRunAs();
+        this.userProfile = context.getJobDefinition().getUserProfile();
+        this.retryOnFailure = context.getJobDefinition().getRetryOnFailure();
+        this.stdoutFile = context.getJobDefinition().getStdoutFile();
+        this.stderrFile = context.getJobDefinition().getStderrFile();
+        this.maxRunTime = context.getJobDefinition().getMaxRunTime();
+        this.maxRetry = context.getJobDefinition().getMaxRetry();
     }
 
     public Process command() {

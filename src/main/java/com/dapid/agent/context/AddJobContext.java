@@ -1,6 +1,7 @@
 package com.dapid.agent.context;
 
 import com.dapid.agent.models.JobDefinition;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.UUID;
 
@@ -9,8 +10,8 @@ import java.util.UUID;
  * Created by Jose M Leon 2017
  **/
 public class AddJobContext {
-    @JsonRequired public UUID jobInstanceId;
-    @JsonRequired public JobDefinition jobDefinition;
+    private UUID jobInstanceId;
+    private JobDefinition jobDefinition;
 
     public AddJobContext() {
     }
@@ -29,5 +30,31 @@ public class AddJobContext {
                 this.jobDefinition.getStdoutFile() != null &&
                 this.jobDefinition.getStderrFile() != null &&
                 this.jobDefinition.getRunAs() != null);
+    }
+
+    // getters and setters
+
+    public UUID getJobInstanceId() {
+        return jobInstanceId;
+    }
+
+    public void setJobInstanceId(UUID jobInstanceId) {
+        this.jobInstanceId = jobInstanceId;
+    }
+
+    public JobDefinition getJobDefinition() {
+        return jobDefinition;
+    }
+
+    public void setJobDefinition(JobDefinition jobDefinition) {
+        this.jobDefinition = jobDefinition;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("jobInstanceId", jobInstanceId)
+                .append("jobDefinition", jobDefinition)
+                .toString();
     }
 }

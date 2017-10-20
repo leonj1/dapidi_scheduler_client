@@ -1,48 +1,56 @@
 package com.dapid.agent.configs;
 
-import com.dapid.agent.services.GetProperty;
+
+import com.josemleon.AppProperty;
+import com.josemleon.exceptions.PropertiesFileNotFoundException;
+
+import java.io.IOException;
 
 /**
  * Created for K and M Consulting LLC.
  * Created by Jose M Leon 2016
  **/
-public class AppProperties implements Props {
+public class AppProperties {
 
-    private GetProperty getProperty;
+    private AppProperty getProperty;
 
-    public AppProperties(GetProperty getProperty) {
+    public AppProperties(AppProperty getProperty) {
         this.getProperty = getProperty;
     }
 
-    public Integer getFailedJobRetryInterval() {
+    public Integer getFailedJobRetryInterval() throws PropertiesFileNotFoundException, IOException {
         return Integer.parseInt(this.getProperty.value("failed.job.retry.interval.seconds"));
     }
 
-    public Integer getHealthCheckInterval() {
+    public Integer getHealthCheckInterval() throws PropertiesFileNotFoundException, IOException {
         return Integer.parseInt(this.getProperty.value("healthcheck.interval.seconds"));
     }
 
-    public String getServerProtocol() {
+    public String getServerProtocol() throws PropertiesFileNotFoundException, IOException {
         return this.getProperty.value("server.protocol");
     }
 
-    public String getJobInstanceApi() {
+    public String getJobInstanceApi() throws PropertiesFileNotFoundException, IOException {
         return this.getProperty.value("update.job.instance");
     }
 
-    public String getClientHost() {
+    public String getClientHost() throws PropertiesFileNotFoundException, IOException {
         return this.getProperty.value("client.host");
     }
 
-    public String getClientPort() {
+    public String getClientPort() throws PropertiesFileNotFoundException, IOException {
         return this.getProperty.value("client.port");
     }
 
-    public String getServerHost() {
+    public String getServerHost() throws PropertiesFileNotFoundException, IOException {
         return this.getProperty.value("server.host");
     }
 
-    public String getServerPort() {
+    public String getServerPort() throws PropertiesFileNotFoundException, IOException {
         return this.getProperty.value("server.port");
+    }
+
+    public int httpServerPort() throws PropertiesFileNotFoundException, IOException {
+        return Integer.parseInt(this.getProperty.value("http.server.port"));
     }
 }

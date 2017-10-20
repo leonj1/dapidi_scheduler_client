@@ -14,14 +14,14 @@ import java.util.concurrent.TimeUnit;
  * Created for K and M Consulting LLC.
  * Created by Jose M Leon 2017
  **/
-public class IamAlive {
-    private static final Logger log = LoggerFactory.getLogger(IamAlive.class);
+public class PhoneHomeThread {
+    private static final Logger log = LoggerFactory.getLogger(PhoneHomeThread.class);
 
     private int healthCheckInterval;
     private String checkInUrl;
     private boolean checkedIn;
 
-    public IamAlive(String serverProtocol, String serverHost, String serverPort, int healthCheckInterval, String clientHost) {
+    public PhoneHomeThread(String serverProtocol, String serverHost, String serverPort, int healthCheckInterval, String clientHost) {
         this.checkedIn = false;
         this.healthCheckInterval = healthCheckInterval;
         this.checkInUrl = String.format(
@@ -34,7 +34,7 @@ public class IamAlive {
         log.info(String.format("Starting Radio. Checkpoint: %s", this.checkInUrl));
     }
 
-    public void say() {
+    public void start() {
         log.info("Kicking off checking thread in background");
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
@@ -62,17 +62,7 @@ public class IamAlive {
         DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
         wr.flush();
         wr.close();
-
         conn.getResponseCode();
-
-//        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//        String inputLine;
-//        StringBuffer response = new StringBuffer();
-//
-//        while ((inputLine = in.readLine()) != null) {
-//            response.append(inputLine);
-//        }
-//        in.close();
         if (!this.checkedIn) {
             log.info("Successfully checking in");
             this.checkedIn = true;
