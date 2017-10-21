@@ -6,6 +6,7 @@ export container=${PROJECT}; docker stop $container; docker rm $container
 
 docker run -d --name ${PROJECT} \
 -p 3232:3232 \
+-e SERVERHOST=scheduler \
 -e APP_PROFILE=integration \
 --net ${CORE_NETWORK} \
 dapidi/${PROJECT}:0.1
