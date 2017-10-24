@@ -1,11 +1,11 @@
 package com.dapid.agent.services;
 
+import com.dapid.agent.models.CheckInContext;
+import com.google.gson.Gson;
+import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,22 +16,20 @@ import java.util.concurrent.TimeUnit;
  **/
 public class PhoneHomeThread {
     private static final Logger log = LoggerFactory.getLogger(PhoneHomeThread.class);
-
+    private AppHttpClient appHttpClient;
     private int healthCheckInterval;
-    private String checkInUrl;
-    private boolean checkedIn;
+    private String clientHostName;
+    private String clientProtocol;
+    private String clientPort;
+    private Gson gson;
 
-    public PhoneHomeThread(String serverProtocol, String serverHost, String serverPort, int healthCheckInterval, String clientHost) {
-        this.checkedIn = false;
+    public PhoneHomeThread(AppHttpClient appHttpClient, int healthCheckInterval, String clientHostName, String clientProtocol, String clientPort) {
+        this.appHttpClient = appHttpClient;
         this.healthCheckInterval = healthCheckInterval;
-        this.checkInUrl = String.format(
-                "%s://%s:%s/agent/%s",
-                serverProtocol,
-                serverHost,
-                serverPort,
-                clientHost
-        );
-        log.info(String.format("Starting Radio. Checkpoint: %s", this.checkInUrl));
+        this.clientHostName = clientHostName;
+        this.clientProtocol = clientProtocol;
+        this.clientPort = clientPort;
+        this.gson = new Gson();
     }
 
     public void start() {
@@ -55,17 +53,20 @@ public class PhoneHomeThread {
 
     private void checkIn() throws Exception {
         log.debug("Ping Checking in");
-        URL obj = new URL(checkInUrl);
-        HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-        wr.flush();
-        wr.close();
-        conn.getResponseCode();
-        if (!this.checkedIn) {
+        WebRestResponse webRestResponse = this.appHttpClient.registerSelf(
+                this.gson.toJson(
+                        new CheckInContext(
+                                this.clientHostName,
+                                String.format("%s://%s:%s",
+                                        this.clientProtocol,
+                                        this.clientHostName,
+                                        this.clientPort
+                                )
+                        )
+                )
+        );
+        if (webRestResponse.status() == HttpStatus.OK_200) {
             log.info("Successfully checking in");
-            this.checkedIn = true;
         }
     }
 }

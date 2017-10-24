@@ -53,4 +53,16 @@ public class AppProperties {
     public int httpServerPort() throws PropertiesFileNotFoundException, IOException {
         return Integer.parseInt(this.getProperty.value("http.server.port"));
     }
+
+    public String registerClientUrl() throws PropertiesFileNotFoundException, IOException {
+        return this.getProperty.value("server.client.register");
+    }
+
+    public String serverHealthCheckUrl() throws PropertiesFileNotFoundException, IOException {
+        return this.getProperty.value("server.health");
+    }
+
+    public String getClientProtocol() throws PropertiesFileNotFoundException, IOException {
+        return this.getProperty.value("client.protocol");
+    }
 }

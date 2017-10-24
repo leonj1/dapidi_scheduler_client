@@ -3,9 +3,11 @@ package com.dapid.agent;
 import com.dapid.agent.configs.AppProperties;
 import com.dapid.agent.controllers.RadioController;
 import com.dapid.agent.controllers.routes.HealthCheckRoute;
+import com.dapid.agent.controllers.routes.ListJobByJobInstanceIdRoute;
 import com.dapid.agent.controllers.routes.ListJobsRoute;
 import com.dapid.agent.controllers.routes.AddNewJobRoute;
 import com.dapid.agent.models.Jobs;
+import com.dapid.agent.services.AgentAppHttpClient;
 import com.dapid.agent.services.HttpPhoneHome;
 import com.dapid.agent.services.StartJobs;
 import com.dapid.agent.services.PhoneHomeThread;
@@ -58,11 +60,15 @@ public class App {
         ConcurrentHashMap jobs = new ConcurrentHashMap<UUID, Jobs>();
 
         PhoneHomeThread iamAlive = new PhoneHomeThread(
-                appProperties.getServerProtocol(),
-                appProperties.getServerHost(),
-                appProperties.getServerPort(),
+                new AgentAppHttpClient(
+                        appProperties.getServerHost(),
+                        appProperties.registerClientUrl(),
+                        appProperties.serverHealthCheckUrl()
+                ),
                 appProperties.getHealthCheckInterval(),
-                appProperties.getClientHost()
+                appProperties.getClientHost(),
+                appProperties.getClientProtocol(),
+                appProperties.getClientPort()
         );
         iamAlive.start();
 
@@ -75,7 +81,8 @@ public class App {
                         appProperties.getServerPort(),
                         appProperties.getJobInstanceApi(),
                         new HttpPhoneHome(HttpClientBuilder.create().build())
-                )
+                ),
+                new ListJobByJobInstanceIdRoute(jobs)
         );
         radioController.expose();
 
